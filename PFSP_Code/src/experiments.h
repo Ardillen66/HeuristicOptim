@@ -1,5 +1,5 @@
-#ifndef _PFSPINSTANCEWT_H_
-#define _PFSPINSTANCEWT_H_
+#ifndef _EXPERIMENT_H_
+#define _EXPERIMENT_H_
 
 #include <vector>
 #include "pfpinstance.h"
