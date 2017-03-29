@@ -8,10 +8,10 @@ using namespace std;
 class FirstImprove : public Pivoting
 {
 public:
-	FirstImprove(){};
-	~FirstImprove(){};
+	FirstImprove(){}
+	~FirstImprove(){}
 
-	std::vector<int> chooseNeighbour(std::list<std::vector<int>> neighs);
+	std::vector<int> selectNeighbour(std::vector<int> neigh, int sIndex);
 };
 
 #endif

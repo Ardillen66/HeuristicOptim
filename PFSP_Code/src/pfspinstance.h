@@ -60,7 +60,8 @@ class PfspInstance{
     /* Read Data from a file : */
     bool readDataFromFile(char * fileName);
 
-    long int computeWCT (vector< int > & sol);
+    std::vector<long int> computeWCT (vector< int > & sol);
+
 };
 
 #endif

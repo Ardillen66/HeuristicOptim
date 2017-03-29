@@ -10,7 +10,7 @@ public:
 	TransposeNeigh() {};
 	~TransposeNeigh() {};
 
-	std::list<std::vector<int>> getNeighbours(std::vector<int> & curSol) ;
+	std::list<std::vector<int>> getNeighbour(std::vector<int> & curSol, Pivoting & pivot) ;
 
 };
 

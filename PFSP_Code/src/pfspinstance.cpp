@@ -152,11 +152,11 @@ bool PfspInstance::readDataFromFile(char * fileName)
 
 
 /* Compute the weighted tardiness of a given solution */
-long int PfspInstance::computeWCT(vector< int > & sol)
+std::vector<long int> PfspInstance::computeWCT(vector< int > & sol)
 {
 	int j, m;
 	int jobNumber;
-	long int wct;
+	std::vector<long int> wct; //Changed to vector containing weighted cumulative sum for each job
 
 	/* We need end times on previous machine : */
 	vector< long int > previousMachineEndTime ( nbJob + 1 );
@@ -196,9 +196,10 @@ long int PfspInstance::computeWCT(vector< int > & sol)
 		}
 	}
 
-	wct = 0;
+	wct[0] = 0;
 	for ( j = 1; j<= nbJob; ++j )
-	    wct += previousMachineEndTime[j] * priority[sol[j]];
+	    wct[j] = wct[j-1] + previousMachineEndTime[j] * priority[sol[j]];
 
 	return wct;
 }
+

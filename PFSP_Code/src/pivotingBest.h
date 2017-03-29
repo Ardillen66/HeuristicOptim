@@ -11,7 +11,7 @@ public:
 	BestImprove(){};
 	~BestImprove(){};
 
-	std::vector<int> chooseNeighbour(std::list<std::vector<int>> neighs);
+	std::vector<int> selectNeighbour(std::vector<int> neighs, int sIndex);
 };
 
 #endif
