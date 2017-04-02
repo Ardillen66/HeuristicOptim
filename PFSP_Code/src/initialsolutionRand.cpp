@@ -1,9 +1,16 @@
 #include <iostream>
 #include <vector> 
+#include <ctime>
 #include "initialsolutionRand.h"
 
 
 using namespace std;
+
+RandInitialsolution::RandInitialsolution() {
+  /* initialize random seed: */
+  srand ( time(NULL) );
+}
+RandInitialsolution::~RandInitialsolution() {}
 
 int RandInitialsolution::generateRndPosition(int min, int max)
 {

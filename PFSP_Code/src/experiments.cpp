@@ -1,37 +1,38 @@
 #include <iostream>
 #include "experiments.h"
 
-
 using namespace std;
 
 Experiments::Experiments(PfspInstance &inst) : instance(inst)
 {
 	//Classes containing a method to get either a random or RZ initial solution
-	initRand = RandInit();
-	initRZ = RZInit();
+	initRand = RandInitialsolution();
+	initRZ = RZInitialsolution();
 }
 
 Experiments::~Experiments()
 {
 }
 
-std::vector<int> Experiments::runIterImprove(Neighbourhood& nbh, Pivot& pr){
+std::vector< std::vector<int> > Experiments::runIterImprove(Neighbourhood & nbh, Pivoting & pr){
 	bool improves = true;
+	std::vector< std::vector<int> > solutions; //vector of all solutions that where visited
+	std::vector<int> initSol =  pr.getCurrentSolution();
+	solutions.push_back(initSol); //Retrieve initial solution conatined in pivot
 	while(improves){
-		//Pointers to vectors are returned
 		std::vector<int> neigh = nbh.getNeighbour(pr); //Get an improving neighbour that is accepted by both the neighbourhood and pivot rule
-		if (neigh[0] <= 0) //If no improving neighbour, return vector of -1
+		if (neigh[1] <= 0) //If no improving neighbour, return vector of -1
 		{
 			improves = false;//If no more improving neighbours, terminate search
 		} else{
-			curSol = neigh;
+			solutions.push_back(neigh); //Add solution to list
 		}
 
 	}
-	return curSol;
+	return solutions;
 }
 
-std::vector<int> Experiments::runVND(std::vector<int> &initialSolution, std::vector<Neighbourhood&> &nbh){
+std::vector< std::vector<int> > Experiments::runVND(std::vector<int> &initialSolution, std::vector< std::shared_ptr<Neighbourhood> > & nbh){
 	//TODO
 }
 

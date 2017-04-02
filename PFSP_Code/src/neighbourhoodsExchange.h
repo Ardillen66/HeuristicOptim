@@ -7,10 +7,10 @@ using namespace std;
 
 class ExchangeNeigh : public Neighbourhood{
 public:
-	ExchangeNeigh() {};
-	~ExchangeNeigh() {};
+	ExchangeNeigh();
+	~ExchangeNeigh();
 
-	std::list<std::vector<int>> getNeighbours(std::vector<int> & curSol) ;
+	std::vector<int> getNeighbour(Pivoting & pivot);
 
 };
 

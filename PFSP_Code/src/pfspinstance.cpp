@@ -76,6 +76,16 @@ long int PfspInstance::getTime(int job, int machine)
   }
 }
 
+long int PfspInstance::getPriority(int job){
+	if (job == 0)
+		return 0;
+	else{
+		if ((job < 1) || (job > nbJob))
+			cout    << "ERROR. file:pfspInstance.cpp, method:getTime. Out of bound. job=" << job;
+		return priority[job];
+	}
+}
+
 
 /* Read the instance from file : */
 bool PfspInstance::readDataFromFile(char * fileName)
@@ -152,11 +162,11 @@ bool PfspInstance::readDataFromFile(char * fileName)
 
 
 /* Compute the weighted tardiness of a given solution */
-std::vector<long int> PfspInstance::computeWCT(vector< int > & sol)
+long int PfspInstance::computeWCT(vector< int > & sol)
 {
 	int j, m;
 	int jobNumber;
-	std::vector<long int> wct; //Changed to vector containing weighted cumulative sum for each job
+	long int wct;
 
 	/* We need end times on previous machine : */
 	vector< long int > previousMachineEndTime ( nbJob + 1 );
@@ -196,9 +206,9 @@ std::vector<long int> PfspInstance::computeWCT(vector< int > & sol)
 		}
 	}
 
-	wct[0] = 0;
+	wct = 0;
 	for ( j = 1; j<= nbJob; ++j )
-	    wct[j] = wct[j-1] + previousMachineEndTime[j] * priority[sol[j]];
+	    wct += previousMachineEndTime[j] * priority[sol[j]];
 
 	return wct;
 }

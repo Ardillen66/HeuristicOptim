@@ -7,10 +7,10 @@ using namespace std;
 
 class TransposeNeigh : public Neighbourhood{
 public:
-	TransposeNeigh() {};
-	~TransposeNeigh() {};
+	TransposeNeigh();
+	~TransposeNeigh();
 
-	std::list<std::vector<int>> getNeighbour(std::vector<int> & curSol, Pivoting & pivot) ;
+	std::vector<int> getNeighbour(Pivoting & pivot);
 
 };
 

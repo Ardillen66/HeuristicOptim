@@ -11,8 +11,8 @@ This class returns a random initial solution
 class RandInitialsolution : public Initialsolution
 {
 public:
-	RandInitialsolution() {};
-	~RandInitialsolution() {};
+	RandInitialsolution();
+	~RandInitialsolution();
 
 	void getInitialSolution(PfspInstance & inst, std::vector<int> & initSol);
 

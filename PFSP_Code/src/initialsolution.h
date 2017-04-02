@@ -1,6 +1,10 @@
 #ifndef _INITSOL_H_
 #define _INITSOL_H_
 
+#include <vector>
+#include "pfspinstance.h"
+
+
 using namespace std;
 
 /**
@@ -10,10 +14,10 @@ All subclasses must implement the getInitialSolution() method
 class Initialsolution
 {
 public:
-	Initialsolution() {};
-	~Initialsolution() {};
+	Initialsolution();
+	~Initialsolution();
 
-	virtual void getInitialSolution(PfspInstance & inst, std::vector<int> & initSol) = 0;
+	virtual void getInitialSolution(PfspInstance & inst, std::vector <int> & initSol) = 0;
 };
 
 #endif
