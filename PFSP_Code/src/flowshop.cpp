@@ -23,88 +23,136 @@
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
+#include <string>
 #include "pfspinstance.h"
 #include "test.h"
 
 using namespace std;
 
+/**
+Performs iterative improvement using the requested neighbourhood, pivot rule and solution initialization for all instances
+*/
 
-int generateRndPosition(int min, int max)
-{
-  return ( rand() % max + min );
-}
-
-
-/* Fill the solution with numbers between 1 and nbJobs, shuffled */
-void randomPermutation(int nbJobs, vector< int > & sol)
-{
-  vector<bool> alreadyTaken(nbJobs+1, false); // nbJobs elements with value false
-  vector<int > choosenNumber(nbJobs+1, 0);
-
-  int nbj;
-  int rnd, i, j, nbFalse;
-
-  nbj = 0;
-  for (i = nbJobs; i >= 1; --i)
-  {
-    rnd = generateRndPosition(1, i);
-    nbFalse = 0;
-
-    /* find the rndth cell with value = false : */
-    for (j = 1; nbFalse < rnd; ++j)
-      if ( ! alreadyTaken[j] )
-        ++nbFalse;
-    --j;
-
-    sol[j] = i;
-
-    ++nbj;
-    choosenNumber[nbj] = j;
-
-    alreadyTaken[j] = true;
+performIIExperiment(string nbh, string pivot, string init){
+  // Initialize neighbourhood
+  Neighbourhood neighbourhood;
+  if (nbh.compare("exchange") == 0){
+    neighbourhood = new ExchangeNeigh();
+  } else if(nbh.compare("transpose") == 0){
+    neighbourhood = new TransposeNeigh();
+  } else {
+    neighbourhood = new InsertNeigh();
   }
+
+  // Initialize initial solution
+  Initialsolution initSol;
+  if(nbh.compare("random") == 0){
+    initSol = new RandInitialsolution();
+  } else {
+    initSol = new RZInitialsolution();
+  }
+
+  // Run first 10 of the 50_20 instances
+  for (int i = 1; i < 10; ++i)
+  {
+    string file = "../instances/50_20_0" + to_string(i);
+    PfspInstance instance;
+    bool readOk = instance.readDataFromFile(file);
+    Experiments exper(instance);
+
+    std::vector<int> initialSolution;
+    initSol.getInitialSolution(instance, initialSolution);
+
+    Pivoting pivotRule;
+    if(pivot.compare("best") == 0){
+      pivotRule = new BestImprove(instance, initialSolution);
+    } else {
+      pivotRule = new FirstImprove(instance, initialSolution);
+    }
+
+    std::vector< std::vector<int> > solutions = exper.runIterImprove(neighbourhood, pivotRule);
+  }
+
+  //Run rest of 50_20 instances
+  for (int i = 10; i <= 30; ++i)
+  {
+    string file = "../instances/50_20_" + to_string(i);
+    PfspInstance instance;
+    bool readOk = instance.readDataFromFile(file);
+    Experiments exper(instance);
+
+    std::vector<int> initialSolution;
+    initSol.getInitialSolution(instance, initialSolution);
+
+    Pivoting pivotRule;
+    if(pivot.compare("best") == 0){
+      pivotRule = new BestImprove(instance, initialSolution);
+    } else {
+      pivotRule = new FirstImprove(instance, initialSolution);
+    }
+
+    std::vector< std::vector<int> > solutions = exper.runIterImprove(neighbourhood, pivotRule);
+  }
+
+  // Run first 10 of the 100_20 instances
+  for (int i = 1; i < 10; ++i)
+  {
+    string file = "../instances/100_20_0" + to_string(i);
+    PfspInstance instance;
+    bool readOk = instance.readDataFromFile(file);
+    Experiments exper(instance);
+
+    std::vector<int> initialSolution;
+    initSol.getInitialSolution(instance, initialSolution);
+
+    Pivoting pivotRule;
+    if(pivot.compare("best") == 0){
+      pivotRule = new BestImprove(instance, initialSolution);
+    } else {
+      pivotRule = new FirstImprove(instance, initialSolution);
+    }
+
+    std::vector< std::vector<int> > solutions = exper.runIterImprove(neighbourhood, pivotRule);
+  }
+
+  //Run rest of 100_20 instances
+  for (int i = 10; i <= 30; ++i)
+  {
+    string file = "../instances/100_20_" + to_string(i);
+    PfspInstance instance;
+    bool readOk = instance.readDataFromFile(file);
+    Experiments exper(instance);
+
+    std::vector<int> initialSolution;
+    initSol.getInitialSolution(instance, initialSolution);
+
+    Pivoting pivotRule;
+    if(pivot.compare("best") == 0){
+      pivotRule = new BestImprove(instance, initialSolution);
+    } else {
+      pivotRule = new FirstImprove(instance, initialSolution);
+    }
+
+    std::vector< std::vector<int> > solutions = exper.runIterImprove(neighbourhood, pivotRule);
+  }
+
 }
+
+
 
 /***********************************************************************/
 
 int main(int argc, char *argv[])
 {
-  // int i;
-  // long int totalWeightedTardiness;
+
+  if (argc == 1)
+  {
+    cout << "Usage: ./flowshopWCT <algorithm> --<pivot_rule> --<neighbourhood> --<initialization>" << endl;
+    return 0;
+  }
 
 
-  // if (argc == 1)
-  // {
-  //   cout << "Usage: ./flowshopWCT <instance_file>" << endl;
-  //   return 0;
-  // }
 
-  // /* initialize random seed: */
-  // srand ( time(NULL) );
-
-  // /* Create instance object */
-  // PfspInstance instance;
-
-  // /* Read data from file */
-  // if (! instance.readDataFromFile(argv[1]) )
-  //   return 1;
-
-  //  Create a vector of int to represent the solution
-  //   WARNING: By convention, we store the jobs starting from index 1,
-  //            thus the size nbJob + 1. 
-  // vector< int > solution ( instance.getNbJob()+ 1 );
-
-  // /* Fill the vector with a random permutation */
-  // randomPermutation(instance.getNbJob(), solution);
-
-  // cout << "Random solution: " ;
-  // for (i = 1; i <= instance.getNbJob(); ++i)
-  //   cout << solution[i] << " " ;
-  // cout << endl;
-
-  // /* Compute the TWT of this solution */
-  // totalWeightedTardiness = instance.computeWCT(solution);
-  // cout << "Total weighted completion time: " << totalWeightedTardiness << endl;
 
   testAll();
 

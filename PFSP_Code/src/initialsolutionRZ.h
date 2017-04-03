@@ -17,6 +17,11 @@ public:
 	~RZInitialsolution();
 
 	void getInitialSolution(PfspInstance & inst, std::vector<int> & initSol);
+
+private:
+	std::vector<double> getWeightedProcTimes(PfspInstance & inst);
+	std::vector<int> getStartSequence(PfspInstance & inst);
+	long int computePartWCT(vector< int > & sol, PfspInstance & inst);
 };
 
 #endif

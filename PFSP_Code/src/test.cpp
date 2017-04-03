@@ -1,10 +1,12 @@
 #include <vector>
 #include <iostream>
+#include <memory>
 
 #include "experiments.h"
 #include "pivotingFirst.h"
 #include "pivotingBest.h"
 #include "initialsolutionRand.h"
+#include "initialsolutionRZ.h"
 #include "neighbourhoodsTranspose.h"
 #include "neighbourhoodsExchange.h"
 #include "neighbourhoodsInsert.h"
@@ -14,10 +16,10 @@ using namespace std;
 
 void testInit(PfspInstance & instance){
 	vector< int > solution ( instance.getNbJob()+ 1 );
-	RandInitialsolution ri;
+	RZInitialsolution ri;
 	ri.getInitialSolution(instance, solution);
 
-    cout << "Random solution: " ;
+    cout << "Initial solution: " ;
 
 	for (int i = 1; i <= instance.getNbJob(); ++i)
 		cout << solution[i] << " " ;
@@ -96,13 +98,35 @@ void testII(PfspInstance & instance){
 
 }
 
+void testVND(PfspInstance & instance){
+	vector< int > solution ( instance.getNbJob()+ 1 );
+	RandInitialsolution ri;
+	ri.getInitialSolution(instance, solution);
+	shared_ptr<Neighbourhood> nbtp(new TransposeNeigh);
+	shared_ptr<Neighbourhood> nbep(new ExchangeNeigh);
+	shared_ptr<Neighbourhood> nbip(new InsertNeigh);
+	std::vector< std::shared_ptr<Neighbourhood> > nbh ({nbtp, nbep, nbip});
+
+	Experiments exper(instance);
+
+	std::vector< std::vector<int> > solutions = exper.runVND(solution, nbh);
+
+	cout << "WCT's for solutions" << endl;
+
+	for (int i = 0; i < solutions.size(); ++i)
+	{
+		cout << instance.computeWCT(solutions[i]) << endl;
+	}
+}
+
 void testAll(){
 	PfspInstance instance;
 	bool readOk = instance.readDataFromFile("../instances/50_20_01");
 	//testInit(instance);
 	//testPivot(instance);
 	//testNeighbour(instance);
-	testII(instance);
+	//testII(instance);
+	testVND(instance);
 
 }
 

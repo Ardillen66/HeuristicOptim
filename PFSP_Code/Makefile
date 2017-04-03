@@ -5,6 +5,7 @@ program : src/pfspinstance.h \
 	src/flowshop.cpp src/pfspinstance.cpp src/experiments.cpp src/initialsolution.cpp src/initialsolutionRand.cpp src/initialsolutionRZ.cpp src/neighbourhoods.cpp src/neighbourhoodsExchange.cpp \
 	src/neighbourhoodsInsert.cpp src/neighbourhoodsTranspose.cpp src/pivoting.cpp src/pivotingBest.cpp src/pivotingFirst.cpp src/test.cpp
 
+	g++ -O3 -std=c++0x -c ./src/helpers.cpp -o src/helpers.o
 	g++ -O3 -std=c++0x -c ./src/flowshop.cpp -o src/flowshop.o
 	g++ -O3 -std=c++0x -c ./src/pfspinstance.cpp -o src/pfspinstance.o
 	g++ -O3 -std=c++0x -c ./src/experiments.cpp -o src/experiments.o
@@ -27,4 +28,4 @@ program : src/pfspinstance.h \
 clean:
 	rm src/*.o flowshopCWT
 
-g++ -O3  src/pivoting.o src/pivotingBest.o src/pivotingFirst.o src/neighbourhoods.o src/neighbourhoodsTranspose.o src/neighbourhoodsInsert.o src/neighbourhoodsExchange.o src/initialsolution.o src/initialsolutionRand.o src/initialsolutionRZ.o src/experiments.o src/flowshop.o src/pfspinstance.o src/test.o -o flowshopWCT
+g++ -O3  src/helpers.o src/pivoting.o src/pivotingBest.o src/pivotingFirst.o src/neighbourhoods.o src/neighbourhoodsTranspose.o src/neighbourhoodsInsert.o src/neighbourhoodsExchange.o src/initialsolution.o src/initialsolutionRand.o src/initialsolutionRZ.o src/experiments.o src/flowshop.o src/pfspinstance.o src/test.o -o flowshopWCT

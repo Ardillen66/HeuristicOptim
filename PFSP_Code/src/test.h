@@ -14,6 +14,8 @@ void testNeighbour(PfspInstance & instance);
 
 void testII(PfspInstance & instance);
 
+void testVND(PfspInstance & instance);
+
 void testAll();
 
 #endif
