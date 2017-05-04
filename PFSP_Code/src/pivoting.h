@@ -16,7 +16,7 @@ public:
 	Returns true if the given neighbour is the one selected by this pivot rule.
 	The index of the currently selected element for swapping is also passed, since Best improvement will require this to terminate and recompute WCT.
 	*/
-	virtual bool selectNeighbour(std::vector<int> neigh, int sIndex) = 0;
+	virtual bool selectNeighbour(std::vector<int> & neigh, int sIndex) = 0;
 
 	std::vector<int> & getCurrentSolution();
 	long int getCurrentWCT();

@@ -13,11 +13,8 @@ Pivoting::Pivoting(PfspInstance &inst, std::vector<int> & initSol) : instance(in
 	for (int cpt = 0; cpt < nbJ; ++cpt)
 		completionTimeMatrix[cpt].resize(nbM); // 2nd dimension
 
-	cout << "Calculate initial WCT" << endl;
 	currentWCT = this->recomputeWCT(currentSolution, 1); //Initialize completion time matrix
-	cout << "Initialize completion times" << endl;
 	this->setCompletionTimes();
-	cout << completionTimeMatrix[0][0] << endl;
 }
 
 Pivoting::~Pivoting(){

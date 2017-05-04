@@ -19,7 +19,7 @@ std::vector<int> InsertNeigh::getNeighbour(Pivoting & pivot){
 		{
 			std::vector<int> neigh = insertElement(tmp, j, job); //Insert job again
 			if(pivot.selectNeighbour(neigh, i)){
-				solution = neigh;
+				solution = pivot.getCurrentSolution();
 				done = true;
 			}
 		}	

@@ -6,7 +6,7 @@ FirstImprove::FirstImprove(PfspInstance & inst, std::vector< int > & initSol) : 
 
 FirstImprove::~FirstImprove(){}
 
-bool FirstImprove::selectNeighbour(std::vector<int> neigh, int sIndex){
+bool FirstImprove::selectNeighbour(std::vector<int> & neigh, int sIndex){
 	long int Nwct = this->recomputeWCT(neigh, sIndex);
 	if (Nwct < this->getCurrentWCT())
 	{

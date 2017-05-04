@@ -11,7 +11,7 @@ public:
 	FirstImprove(PfspInstance & inst, std::vector< int > & initSol);
 	~FirstImprove();
 
-	bool selectNeighbour(std::vector<int> neigh, int sIndex);
+	bool selectNeighbour(std::vector<int> & neigh, int sIndex);
 };
 
 #endif

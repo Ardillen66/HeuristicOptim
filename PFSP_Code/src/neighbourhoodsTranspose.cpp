@@ -18,7 +18,7 @@ std::vector<int> TransposeNeigh::getNeighbour(Pivoting & pivot){
 		int next = (i >= nrJobs - 1) ? 1 : i + 1; //Last job is swapped with first
 		std::vector<int> neigh = this->swapElements(curSol, i, next);
 		if(pivot.selectNeighbour(neigh, i)){
-			solution = neigh;
+			solution = pivot.getCurrentSolution();
 			done = true;
 		}
 	}

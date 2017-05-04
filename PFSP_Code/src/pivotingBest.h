@@ -13,7 +13,7 @@ public:
 	BestImprove(PfspInstance & inst, std::vector< int > & initSol);
 	~BestImprove();
 
-	bool selectNeighbour(std::vector<int> neighs, int sIndex);
+	bool selectNeighbour(std::vector<int> & neighs, int sIndex);
 
 private:
 	std::vector<int> currentBestImprove;

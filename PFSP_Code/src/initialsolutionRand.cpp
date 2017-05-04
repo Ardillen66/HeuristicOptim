@@ -7,8 +7,6 @@
 using namespace std;
 
 RandInitialsolution::RandInitialsolution() {
-  /* initialize random seed: */
-  srand ( time(NULL) );
 }
 RandInitialsolution::~RandInitialsolution() {}
 
@@ -30,7 +28,7 @@ void RandInitialsolution::getInitialSolution(PfspInstance & inst, vector< int > 
   nbj = 0;
   for (i = nbJobs; i >= 1; --i)
   {
-    rnd = generateRndPosition(1, i);
+    rnd = this->generateRndPosition(1, i);
     nbFalse = 0;
 
     /* find the rndth cell with value = false : */

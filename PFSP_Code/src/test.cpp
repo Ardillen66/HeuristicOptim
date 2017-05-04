@@ -87,14 +87,7 @@ void testII(PfspInstance & instance){
 
 	Experiments exper(instance);
 
-	std::vector< std::vector<int> > solutions = exper.runIterImprove(nbh, pivot);
-
-	cout << "WCT's for solutions" << endl;
-
-	for (int i = 0; i < solutions.size(); ++i)
-	{
-		cout << instance.computeWCT(solutions[i]) << endl;
-	}
+	std::vector<int> solutions = exper.runIterImprove(nbh, pivot);
 
 }
 
@@ -109,14 +102,10 @@ void testVND(PfspInstance & instance){
 
 	Experiments exper(instance);
 
-	std::vector< std::vector<int> > solutions = exper.runVND(solution, nbh);
+	std::vector<int> solutions = exper.runVND(solution, nbh);
 
 	cout << "WCT's for solutions" << endl;
 
-	for (int i = 0; i < solutions.size(); ++i)
-	{
-		cout << instance.computeWCT(solutions[i]) << endl;
-	}
 }
 
 void testAll(){

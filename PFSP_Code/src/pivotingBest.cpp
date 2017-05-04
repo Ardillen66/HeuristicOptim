@@ -13,7 +13,7 @@ void BestImprove::setCompletionTimes(){
 	completionTimeMatrix.swap(curBestCTMatrix);
 }
 
-bool BestImprove::selectNeighbour(std::vector<int> neigh, int sIndex){
+bool BestImprove::selectNeighbour(std::vector<int> & neigh, int sIndex){
 	long int Nwct = this->recomputeWCT(neigh, sIndex);
 
 	if(Nwct < curBestWCT){
