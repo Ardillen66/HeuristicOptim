@@ -18,14 +18,15 @@ std::vector<int> removeElement(std::vector<int> & v, int index){
 
 /**
 Inserts element at given position in vector and shifts all folowing elements 1 position to the right
-NOTE: assumes given vector is already the right size for insert
+NOTE: assumes given vector is already the right size for insert with the last position empty
 */
 std::vector<int> insertElement(std::vector<int> & v, int index, int job){
+
   std::vector<int> res (v); 
-  res[index] = job;
-  for (int i = index + 1; i < res.size(); ++i)
+  for (int i = res.size()-2 ; i >= index ; --i) //Start at second to last position, as last position should be empty
   {
     res[i] = v[i-1];
   }
+  res[index] = job;
   return res;
 }

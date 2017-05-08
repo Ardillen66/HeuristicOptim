@@ -53,6 +53,18 @@ std::vector<int> Experiments::runVND(std::vector<int> &initialSolution, std::vec
 	return solution;
 }
 
+/**
+Runs an Ant Colony algorithm using the given neighbourhood an pivoting rule for iterative improvement part
+The trail persistence parameter is required to update the pheromone trails and the algorithm stops after the given runTime
+*/
+std::vector<int> Experiments::runACO(Neighbourhood & iiNbh, Pivoting & iiPr, float trailPersistence, double runTime){
+	//Find initial solution with II or VND
+
+	//Calculate initial pheromone trails
+
+	//Construct new solution and update pheromone trails until runTime is over
+}
+
 
 
 

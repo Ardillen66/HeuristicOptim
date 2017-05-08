@@ -21,7 +21,7 @@ public:
 private:
 	std::vector<double> getWeightedProcTimes(PfspInstance & inst);
 	std::vector<int> getStartSequence(PfspInstance & inst);
-	long int computePartWCT(vector< int > & sol, PfspInstance & inst);
+	long int computePartWCT(vector< int > & sol, int size, PfspInstance & inst);
 };
 
 #endif
