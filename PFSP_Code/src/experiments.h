@@ -29,6 +29,8 @@ class Experiments{
 
 		//implements Variable Neighbour descent algorithm giiven a starting solution, a vector og neighbourhood relations
 		std::vector<int> runVND(std::vector< int > & initialSolution, std::vector< std::shared_ptr<Neighbourhood> > & nbh);
+
+		std::vector<int> runACO(Neighbourhood & iiNbh, Pivoting & iiPr, float trailPersistence, double runTime);
 };
 
 #endif

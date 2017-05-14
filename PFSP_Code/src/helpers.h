@@ -14,5 +14,12 @@ NOTE: assumes given vector is already the right size for insert
 */
 std::vector<int> insertElement(std::vector<int> & v, int index, int job);
 
+
+
+std::vector<int> buildACOSolution(std::vector<int> & curBest, std::vector< std::vector<double> > & pherTrails);
+
+void updatePheromoneTrails(std::vector<int> & curBest, std::vector<int> & newBest, std::vector< std::vector<double> > & pherTrails);
+
+
 #endif
 
