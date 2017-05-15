@@ -15,9 +15,6 @@ public:
 	~RandInitialsolution();
 
 	void getInitialSolution(PfspInstance & inst, std::vector<int> & initSol);
-
-private:
-	int generateRndPosition(int min, int max);
 };
 
 #endif

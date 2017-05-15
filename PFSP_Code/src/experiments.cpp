@@ -1,5 +1,9 @@
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 #include "helpers.h"
+#include "aco.h"
+#include "iga.h"
 #include "experiments.h"
 
 using namespace std;
@@ -76,7 +80,6 @@ std::vector<int> Experiments::runACO(Neighbourhood & iiNbh, Pivoting & iiPr, flo
 	//Iterate until runtime is over
 	while(duration <= runTime){
 		std::vector<int> acoSol = buildACOSolution(bestSol, pherTrails); //Build new solution with ACO
-		long int acoWCT = instance.computeWCT(acoSol);
 		
 		//First improve since we are mostly interested in seeing wether the solution can be improved and Best improve would take too long
 		FirstImprove improvePivot = new FirstImprove (instance, acoSol); 
@@ -95,7 +98,63 @@ std::vector<int> Experiments::runACO(Neighbourhood & iiNbh, Pivoting & iiPr, flo
 
 		duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC; //Update duration
 	}
+	return bestSol;
 }
+
+
+std::vector<int> Experiments::runIGA(Neighbourhood & iiNbh, Pivoting & iiPr, int d, double lambda, double runTime){
+	PfspInstance instance = iiPr.getInstance();
+	int nbJob = instance.getNbJob();
+	double sa_temp = annealing_temperature(lambda, instance);
+	std::clock_t start;
+    double duration = 0;
+    start = std::clock();
+
+	//Find initial solution with Iterative improvement, current best solution initialized with this value
+	std::vector<int> acceptedSol = this->runIterImprove(iiNbh, iiPr); 
+	long int acceptedWCT =  instance.computeWCT(acceptedSol);
+
+	std::vector<int> bestSol = acceptedSol;
+	long int bestWCT = acceptedWCT;
+
+	//Iterate until runtime is over
+	while(duration <= runTime){
+		std::vector<int> igaSol = destruction_construction(bestSol, pherTrails); //Build new solution with ACO
+		
+		//First improve since we are mostly interested in seeing wether the solution can be improved and Best improve would take too long
+		FirstImprove improvePivot = new FirstImprove (instance, igaSol); 
+		std::vector<int> maybeImprovedSol = this->runIterImprove(iiNbhn improvePivot); //Try to improve with iterative improvement
+		long int maybeBetterWCT = instance.computeWCT(maybeImprovedSol);
+
+
+		if (maybeBetterWCT < acceptedWCT)
+		{
+			acceptedSol = maybeImprovedSol;
+			acceptedWCT = maybeBetterWCT;
+			if (maybeBetterWCT < bestWCT)
+			{
+				bestSol = maybeImprovedSol;
+				bestWCT = maybeBetterWCT;
+			}
+		}else{
+			double ra = ((double) rand() / (RAND_MAX));//Generate random number between 0 and 1
+			double accept = simulated_annealing(bestWCT, maybeBetterWCT, sa_temp);
+			if (ra <= accept)
+			{
+				acceptedSol = maybeImprovedSol;
+				acceptedWCT = maybeBetterWCT;
+			}
+		}
+
+		delete improvePivot;//clean up pivot on every iteration
+
+		duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC; //Update duration
+	}
+
+	return bestSol;
+}
+
+
 
 
 

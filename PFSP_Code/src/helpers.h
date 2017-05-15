@@ -2,6 +2,7 @@
 #define _HELPERS_H_ 
 
 #include <vector>
+#include "pfspinstance.h"
 
 /**
 Removes the element at given index and shifts all folowing members  a position to the left
@@ -14,11 +15,9 @@ NOTE: assumes given vector is already the right size for insert
 */
 std::vector<int> insertElement(std::vector<int> & v, int index, int job);
 
+long int computePartWCT(std::vector<int> & sol, int size, PfspInstance & inst);
 
-
-std::vector<int> buildACOSolution(std::vector<int> & curBest, std::vector< std::vector<double> > & pherTrails);
-
-void updatePheromoneTrails(std::vector<int> & curBest, std::vector<int> & newBest, std::vector< std::vector<double> > & pherTrails);
+int generateRndPosition(int min, int max);
 
 
 #endif

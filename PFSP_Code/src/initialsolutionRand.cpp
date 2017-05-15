@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector> 
 #include <ctime>
+#include "helpers.h"
 #include "initialsolutionRand.h"
 
 
@@ -9,11 +10,6 @@ using namespace std;
 RandInitialsolution::RandInitialsolution() {
 }
 RandInitialsolution::~RandInitialsolution() {}
-
-int RandInitialsolution::generateRndPosition(int min, int max)
-{
-  return ( rand() % max + min );
-}
 
 /* Fill the solution with numbers between 1 and nbJobs, shuffled */
 void RandInitialsolution::getInitialSolution(PfspInstance & inst, vector< int > & sol)
@@ -28,7 +24,7 @@ void RandInitialsolution::getInitialSolution(PfspInstance & inst, vector< int > 
   nbj = 0;
   for (i = nbJobs; i >= 1; --i)
   {
-    rnd = this->generateRndPosition(1, i);
+    rnd = generateRndPosition(1, i);
     nbFalse = 0;
 
     /* find the rndth cell with value = false : */

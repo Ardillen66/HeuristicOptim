@@ -1,11 +1,6 @@
 using namespace std;
 
 #include "helpers.h"
-#include <cstdlib>
-#include <random>
-#include <chrono>
-#include <cmath>
-#include <algorithm>   
 
 //------------------------------------------------------------------ Insert helpers -----------------------------------------------------------------------
 
@@ -38,100 +33,62 @@ std::vector<int> insertElement(std::vector<int> & v, int index, int job){
   return res;
 }
 
+/* Compute the weighted tardiness of a given PARTIAL solution and current size of solution */
+long int RZInitialsolution::computePartWCT(vector< int > & sol, int size, PfspInstance & inst)
+{
+  int j, m;
+  int jobNumber;
+  long int wct;
+  int nbMac = inst.getNbMac();
 
-//--------------------------------------------------------------- ACO helper functions ----------------------------------------------------------------------
+  /* We need end times on previous machine : */
+  vector< long int > previousMachineEndTime (size + 1);
+  /* And the end time of the previous job, on the same machine : */
+  long int previousJobEndTime;
 
-std::vector<int> buildACOSolution(std::vector<int> & curBest, std::vector< std::vector<double> > & pherTrails){
-  int solSize = curBest.size();
-  std::vector<bool> scheduled (solSize, false);
-  std::vector<int> curSol;
-  for (int i = 1; i < solSize; ++i)
+  /* 1st machine : */
+  previousMachineEndTime[0] = 0;
+  for ( j = 1; j <= size; ++j )
   {
-    double u = ((double) rand() / (RAND_MAX));//Generate random number between 0 and 1
-    if (u <= 0.4)
+    jobNumber = sol[j];
+    previousMachineEndTime[j] = previousMachineEndTime[j-1] + inst.getTime(jobNumber, 1);
+  }
+
+  /* others machines : */
+  for ( m = 2; m <= nbMac; ++m )
+  {
+    previousMachineEndTime[1] += inst.getTime(sol[1], m);
+    previousJobEndTime = previousMachineEndTime[1];
+
+    for ( j = 2; j <= size; ++j )
     {
-      //Schedule first job from current solution
-      int firstUnsched = getUnscheduled(scheduled);
-      curSol.push_back(curBest[firstUnsched]);
-      scheduled[firstUnsched] = true;
-    } else {
-      //Get first five or all remaining unscheduled jobs in current sequence with their trail intensities
-      std::vector<int> firstUnsched;
-      std::vector<double> trails;
-      int unschedIndex;
-      for (int i = 0; i < 5 || unschedIndex > 0; ++i)
-        {
-          unschedIndex = getUnscheduled(scheduled);
-          if(unschedIndex > 0 ){
-            firstUnsched.push_back(unschedIndex)//Register index of unschedulued job
-            double trailIntensity = trailSum(curBest[unschedIndex], unschedIndex, pherTrails);
-            trails.push_back(trailIntensity);
-          }
-        }
-      int selectedIndex;//Will contain index of selected job on current sequence
-      if (u <= 0.8)
+      jobNumber = sol[j];
+
+      if ( previousMachineEndTime[j] > previousJobEndTime )
       {
-        // Schedule job with highest intensity sum from first five in current solution
-        std::vector<double>::iterator mew = max_element(trails.begin(),trails.end());
-        int argMax = distance(trails.begin(), max); 
-        selectedIndex = firstUnsched[argMax];
-      } else {
-        // Schedule job from first five with probability T(ik) / sum(T(il))
-        std::vector<double> probabilities(firstUnsched.size());
-        for (int i = 0; i < probabilities.size(); ++i)
-        {
-          probabilities[i] = trails[i] / trailTotal;
-        }
-        // construct a trivial random generator engine from a time-based seed:
-        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-        std::default_random_engine generator (seed);
-        discrete_distribution<int> distribution (probabilities.begin(), probabilities.end());
-        selectedIndex = distribution(generator);
+        previousMachineEndTime[j] = previousMachineEndTime[j] + inst.getTime(jobNumber, m);
+        previousJobEndTime = previousMachineEndTime[j];
       }
-      curSol.push_back(curBest[selectedIndex]);
-      scheduled[selectedIndex] = true;
-    }
-  }
-  return curSol;
-}
-
-int getUnscheduled(std::vector<bool> & scheduled){
-  for (int i = 1; i < scheduled.size(); ++i)
-  {
-    if (! scheduled[i])
-    {
-      return i;
-    }
-  }
-  return -1; //-1 if no unscheduled jobs left
-}
-
-double trailSum(int job, int index, std::vector< std::vector<double> > & pherTrails){
-  double ts = 0;
-  for (int i = 0; i < index; ++i)
-  {
-    ts += pherTrails[i][job-1] //Pheromone trails index from 0!
-  }
-  return ts;
-}
-
-void updatePheromoneTrails(std::vector<int> & curBest, std::vector<int> & newBest, long int newWCT, 
-                              float trailPersistence, std::vector< std::vector<double> > & pherTrails){
-  int solSize = newBest.size();
-  for (int i = 1; i < solSize; ++i) //Positions in new best solution
-  {
-    int job = newBest[i];
-    int jobIndex = job - 1; //Pheromone trails indexed from 0!
-    std::vector<double>::iterator prevPosIt = find(curBest.begin(), curBest.end(), job); 
-    int previousPos = distance(curBest.begin(), prevPosIt); //Position in best solution so far
-    double diff = sqrt(fabs(previousPos - i) + 1); //diff from ACO paper, measure of distance between the previous position and new position of a job
-    for (int j = 1; j < count; ++i)
-    {
-      if (j == i)
-        pherTrails[j][jobIndex] = trailPersistence * pherTrails[j][jobIndex] + (1 / (diff * newWCT));
       else
-        pherTrails[j][jobIndex] = trailPersistence * pherTrails[j][jobIndex];
+      {
+        previousJobEndTime += inst.getTime(jobNumber, m);
+        previousMachineEndTime[j] = previousJobEndTime;
+      }
     }
   }
+
+  wct = 0;
+  for ( j = 1; j<= size; ++j )
+      wct += previousMachineEndTime[j] * inst.getPriority(sol[j]);
+
+  return wct;
+}
+
+/*
+Generate number in range [min, max]
+*/
+int RandInitialsolution::generateRndPosition(int min, int max)
+{
+  return ( rand() % max + min );
 }
 

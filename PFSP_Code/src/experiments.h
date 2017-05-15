@@ -31,6 +31,8 @@ class Experiments{
 		std::vector<int> runVND(std::vector< int > & initialSolution, std::vector< std::shared_ptr<Neighbourhood> > & nbh);
 
 		std::vector<int> runACO(Neighbourhood & iiNbh, Pivoting & iiPr, float trailPersistence, double runTime);
+
+		std::vector<int> destruction_construction(std::vector<int> & curSol, int d, PfspiInstance & instance);
 };
 
 #endif

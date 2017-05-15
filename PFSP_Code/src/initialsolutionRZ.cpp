@@ -43,57 +43,6 @@ std::vector<int> RZInitialsolution::getStartSequence(PfspInstance & inst){
 	return startSequence;
 }
 
-/* Compute the weighted tardiness of a given PARTIAL solution and current size of solution */
-long int RZInitialsolution::computePartWCT(vector< int > & sol, int size, PfspInstance & inst)
-{
-	int j, m;
-	int jobNumber;
-	long int wct;
-	int nbMac = inst.getNbMac();
-
-	/* We need end times on previous machine : */
-	vector< long int > previousMachineEndTime (size + 1);
-	/* And the end time of the previous job, on the same machine : */
-	long int previousJobEndTime;
-
-	/* 1st machine : */
-	previousMachineEndTime[0] = 0;
-	for ( j = 1; j <= size; ++j )
-	{
-		jobNumber = sol[j];
-		previousMachineEndTime[j] = previousMachineEndTime[j-1] + inst.getTime(jobNumber, 1);
-	}
-
-	/* others machines : */
-	for ( m = 2; m <= nbMac; ++m )
-	{
-		previousMachineEndTime[1] += inst.getTime(sol[1], m);
-		previousJobEndTime = previousMachineEndTime[1];
-
-		for ( j = 2; j <= size; ++j )
-		{
-			jobNumber = sol[j];
-
-			if ( previousMachineEndTime[j] > previousJobEndTime )
-			{
-				previousMachineEndTime[j] = previousMachineEndTime[j] + inst.getTime(jobNumber, m);
-				previousJobEndTime = previousMachineEndTime[j];
-			}
-			else
-			{
-				previousJobEndTime += inst.getTime(jobNumber, m);
-				previousMachineEndTime[j] = previousJobEndTime;
-			}
-		}
-	}
-
-	wct = 0;
-	for ( j = 1; j<= size; ++j )
-	    wct += previousMachineEndTime[j] * inst.getPriority(sol[j]);
-
-	return wct;
-}
-
 void RZInitialsolution::getInitialSolution(PfspInstance & inst, std::vector<int> & initSol){
 	
 	std::vector<int> startSequence = this->getStartSequence(inst);
