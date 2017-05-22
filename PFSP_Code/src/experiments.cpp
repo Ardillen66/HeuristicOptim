@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include "pivotingFirst.h"
 #include "helpers.h"
 #include "aco.h"
 #include "iga.h"
@@ -63,30 +64,40 @@ The trail persistence parameter is required to update the pheromone trails and t
 concrete algo is ACO2 from: 
 C. Rajendran and H. Ziegler. Two ant-colony algorithms for minimizing total flowtime in permutation flowshops. Computers & Industrial Engineering, 48:789–797, 2005.
 */
-std::vector<int> Experiments::runACO(Neighbourhood & iiNbh, Pivoting & iiPr, float trailPersistence, double runTime){
-	PfspInstance instance = iiPr.getInstance();
+std::vector<int> Experiments::runACO(Neighbourhood & iiNbh, Pivoting & iiPr, float trailPersistence, double runTime, long int targetWCT){
 	int nbJob = instance.getNbJob();
 	std::clock_t start;
     double duration = 0;
     start = std::clock();
-
+    //cout << "Improving initial solution" << endl;
 	//Find initial solution with Iterative improvement, current best solution initialized with this value
 	std::vector<int> bestSol = this->runIterImprove(iiNbh, iiPr); 
 	long int bestWCT =  instance.computeWCT(bestSol);
+	//cout << "Improved WCT: " << bestWCT << endl;
 
+	long double initialIntensity = 10000.0 / bestWCT;
 	//Initialize pheromone trails
-	std::vector< std::vector<double> > pherTrails (nbJob, std::vector<double> (nbJob, 1/bestWCT)); //Pheromone trails indexed from 0, dimensions: [position][job]
+	std::vector< std::vector<long double> > pherTrails (nbJob, std::vector<long double>(nbJob, initialIntensity)); //Pheromone trails indexed from 0, dimensions: [position][job]
+	//cout << "Pheromone trails:" << endl;
+	// for (int i = 0; i < nbJob; ++i)
+	// {
+	// 	printList(pherTrails[i]);
+	// }
 
-	//Iterate until runtime is over
-	while(duration <= runTime){
+	//cout << "ACO loop started" << endl;
+	//Iterate until runtime is over or target WCT is reached
+	while(duration <= runTime && bestWCT > targetWCT){
+		//cout << "Building ACO solution" << endl;
 		std::vector<int> acoSol = buildACOSolution(bestSol, pherTrails); //Build new solution with ACO
 		
+		//cout << "Improving ACO solution" << endl;
 		//First improve since we are mostly interested in seeing wether the solution can be improved and Best improve would take too long
-		FirstImprove improvePivot = new FirstImprove (instance, acoSol); 
-		std::vector<int> maybeImprovedSol = this->runIterImprove(iiNbhn improvePivot); //Try to improve with iterative improvement
+		FirstImprove improvePivot (instance, acoSol); 
+		std::vector<int> maybeImprovedSol = this->runIterImprove(iiNbh, improvePivot); //Try to improve with iterative improvement
 		long int maybeBetterWCT = instance.computeWCT(maybeImprovedSol);
 
-		updatePheromoneTrails(bestSol, maybeBetterWCT, maybeBetterWCT, trailPersistence, pherTrails);
+		//cout << "Updating pheromone trails" << endl;
+		updatePheromoneTrails(bestSol, maybeImprovedSol, maybeBetterWCT, trailPersistence, pherTrails);
 
 		if (maybeBetterWCT < bestWCT) //At worst same as ACO solution, at best improved solution
 		{
@@ -94,18 +105,16 @@ std::vector<int> Experiments::runACO(Neighbourhood & iiNbh, Pivoting & iiPr, flo
 			bestWCT = maybeBetterWCT;
 		}
 
-		delete improvePivot;//clean up pivot on every iteration
-
 		duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC; //Update duration
 	}
 	return bestSol;
 }
 
 
-std::vector<int> Experiments::runIGA(Neighbourhood & iiNbh, Pivoting & iiPr, int d, double lambda, double runTime){
-	PfspInstance instance = iiPr.getInstance();
+std::vector<int> Experiments::runIGA(Neighbourhood & iiNbh, Pivoting & iiPr, int d, double lambda, double runTime, long int targetWCT){
 	int nbJob = instance.getNbJob();
 	double sa_temp = annealing_temperature(lambda, instance);
+	//cout << "SA temperature: " << sa_temp << endl;
 	std::clock_t start;
     double duration = 0;
     start = std::clock();
@@ -118,35 +127,36 @@ std::vector<int> Experiments::runIGA(Neighbourhood & iiNbh, Pivoting & iiPr, int
 	long int bestWCT = acceptedWCT;
 
 	//Iterate until runtime is over
-	while(duration <= runTime){
-		std::vector<int> igaSol = destruction_construction(bestSol, pherTrails); //Build new solution with ACO
+	while(duration <= runTime && bestWCT > targetWCT){
+		std::vector<int> igaSol = destruction_construction(bestSol, d, instance); //Build new solution with destruction/construction
 		
 		//First improve since we are mostly interested in seeing wether the solution can be improved and Best improve would take too long
-		FirstImprove improvePivot = new FirstImprove (instance, igaSol); 
-		std::vector<int> maybeImprovedSol = this->runIterImprove(iiNbhn improvePivot); //Try to improve with iterative improvement
+		FirstImprove improvePivot (instance, igaSol); 
+		//cout << "Improving destruction/construction solution" << endl;
+		std::vector<int> maybeImprovedSol = this->runIterImprove(iiNbh, improvePivot); //Try to improve with iterative improvement
 		long int maybeBetterWCT = instance.computeWCT(maybeImprovedSol);
 
 
 		if (maybeBetterWCT < acceptedWCT)
 		{
+			//cout << "Improved accepted solution" << endl;
 			acceptedSol = maybeImprovedSol;
 			acceptedWCT = maybeBetterWCT;
 			if (maybeBetterWCT < bestWCT)
 			{
+				//cout << "Improved best solution" << endl;
 				bestSol = maybeImprovedSol;
 				bestWCT = maybeBetterWCT;
 			}
 		}else{
 			double ra = ((double) rand() / (RAND_MAX));//Generate random number between 0 and 1
-			double accept = simulated_annealing(bestWCT, maybeBetterWCT, sa_temp);
+			double accept = simulated_annealing(acceptedWCT, maybeBetterWCT, sa_temp);
 			if (ra <= accept)
 			{
 				acceptedSol = maybeImprovedSol;
 				acceptedWCT = maybeBetterWCT;
 			}
 		}
-
-		delete improvePivot;//clean up pivot on every iteration
 
 		duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC; //Update duration
 	}
