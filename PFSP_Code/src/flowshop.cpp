@@ -405,8 +405,8 @@ std::vector< std::vector<double> > performSLSExperiment(string nbh, string pivot
       vnd_time_100 += vnd_results[1][i];
     }
   }
-  double run_time_50 = vnd_time_50 / nbInstancesSize * 50; //get average and multiply by 500
-  double run_time_100 = vnd_time_100 / nbInstancesSize * 50;
+  double run_time_50 = vnd_time_50 / nbInstancesSize * 10; //get average and multiply by 500
+  double run_time_100 = vnd_time_100 / nbInstancesSize * 5;
   
   cout << "Runtimes: 50=" << run_time_50 << ", 100=" << run_time_100 << endl;
   // Run first 10 of the 50_20 instances
