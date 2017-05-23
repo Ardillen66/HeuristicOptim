@@ -627,7 +627,9 @@ void run_time_dist(string nbh, string pivot, string trail_pers, string iga_d, st
   // }
   double run_time_50 = 5;//vnd_time_50 / nbInstancesSize * 100; //get average and multiply by 5000
 
-  cout << "Run time distribution (" << deviation << " % from target):" << endl;
+  std::vector<double> runtTimesACO(5, 0.0);
+  std::vector<double> runtTimesIGA(5, 0.0);
+  cout << "Run time distribution" << endl;
   for (int i = 0; i < 5; ++i)
   {
     cout << "Instance " << i+1 << ": " << endl;
@@ -637,7 +639,6 @@ void run_time_dist(string nbh, string pivot, string trail_pers, string iga_d, st
     PfspInstance instance;
     bool readOk = instance.readDataFromFile(&file[0u]);
     Experiments exper(instance);
-    cout << "ACO, IGA" << endl;
     long int targetWCT = bestWCTs[i] + dev_from_best * bestWCTs[i];
 
     for (int j = 0; j < 25; ++j)
@@ -645,6 +646,7 @@ void run_time_dist(string nbh, string pivot, string trail_pers, string iga_d, st
 
       std::vector<int> initialSolution(instance.getNbJob() + 1);
 
+      cout << "Retrieving initial solution" << endl;
       initSol->getInitialSolution(instance, initialSolution);
 
       Pivoting * pivotRule = NULL;
@@ -658,28 +660,32 @@ void run_time_dist(string nbh, string pivot, string trail_pers, string iga_d, st
 
       //We make our timer variables
       std::clock_t start;
-      double duration;
       start = std::clock();
 
+      cout << "Run ACO" << endl;
       std::vector<int> solution_aco = exper.runACO(*neighbourhood, *pivotRule, trail_persistence, run_time_50, targetWCT);
 
-      duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
-      cout << duration << ", ";
+      runtTimesACO[i] += ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
 
       start = std::clock(); //Restart timer
 
+      cout << "Run IGA" << endl;
       std::vector<int> solution_iga = exper.runIGA(*neighbourhood, *pivotRule, d, lambda, run_time_50, targetWCT);
 
-      duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
-      cout << duration << endl;
+      runtTimesIGA[i] += ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
 
       delete pivotRule;
     }
-    cout << endl; //Blank line between runs from different instances
+    runtTimesACO[i] = runtTimesIGA[i] / 25;
+    runtTimesIGA[i] = runtTimesIGA[i] / 25;//Average
   }
 
   delete neighbourhood;
   delete initSol;
+
+  cout << "ACO runtimes: " << runtTimesACO[0] << ", " << runtTimesACO[1] << ", " << runtTimesACO[2] << ", " << runtTimesACO[3] << ", " << runtTimesACO[4] << endl;
+  cout << "IGA runtimes: " << runtTimesIGA[0] << ", " << runtTimesIGA[1] << ", " << runtTimesIGA[2] << ", " << runtTimesIGA[3] << ", " << runtTimesIGA[4] << endl;
+
 
 }
 
