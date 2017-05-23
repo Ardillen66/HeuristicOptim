@@ -627,8 +627,8 @@ void run_time_dist(string nbh, string pivot, string trail_pers, string iga_d, st
   }
   double run_time_50 = vnd_time_50 / nbInstancesSize * 100; //get average and multiply by 5000
 
-  std::vector<double> runtTimesACO(5, 0.0);
-  std::vector<double> runtTimesIGA(5, 0.0);
+  std::vector< std::vector<double> > runtTimesACO(5, std::vector<double>(25, 0.0));
+  std::vector< std::vector<double> > runtTimesIGA(5, std::vector<double>(25, 0.0));
   cout << "Run time distribution" << endl;
   for (int i = 0; i < 5; ++i)
   {
@@ -665,7 +665,7 @@ void run_time_dist(string nbh, string pivot, string trail_pers, string iga_d, st
       cout << "Run ACO" << endl;
       std::vector<int> solution_aco = exper.runACO(*neighbourhood, *pivotRule, trail_persistence, run_time_50, targetWCT);
 
-      runtTimesACO[i] += ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
+      runtTimesACO[i][j] = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
 
       //New pivot for IGA
       if(pivot.compare("best") == 0){
@@ -681,7 +681,7 @@ void run_time_dist(string nbh, string pivot, string trail_pers, string iga_d, st
       cout << "Run IGA" << endl;
       std::vector<int> solution_iga = exper.runIGA(*neighbourhood, *pivotRule, d, lambda, run_time_50, targetWCT);
 
-      runtTimesIGA[i] += ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
+      runtTimesIGA[i][j] = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
 
       delete pivotRule;
     }
@@ -692,9 +692,20 @@ void run_time_dist(string nbh, string pivot, string trail_pers, string iga_d, st
   delete neighbourhood;
   delete initSol;
 
-  cout << "ACO runtimes: " << runtTimesACO[0] << ", " << runtTimesACO[1] << ", " << runtTimesACO[2] << ", " << runtTimesACO[3] << ", " << runtTimesACO[4] << endl;
-  cout << "IGA runtimes: " << runtTimesIGA[0] << ", " << runtTimesIGA[1] << ", " << runtTimesIGA[2] << ", " << runtTimesIGA[3] << ", " << runtTimesIGA[4] << endl;
-
+  cout << "Max runtime: " << run_time_50 << endl;
+  //Output run times
+  cout << "ACO runtimes: " << endl;
+  cout << "I1, I2, I3, I4, I5" << endl;
+  for (int i = 0; i < 25; ++i)
+   {
+      cout << runtTimesACO[0][i] << ", " << runtTimesACO[1][i] << ", " << runtTimesACO[2][i] << ", " << runtTimesACO[3][i] << ", " << runtTimesACO[4][i] << endl;
+   } 
+  cout << "IGA runtimes: " << endl;
+  cout << "I1, I2, I3, I4, I5" << endl;
+  for (int i = 0; i < 25; ++i)
+  {
+    cout << runtTimesIGA[0][i] << ", " << runtTimesIGA[1][i] << ", " << runtTimesIGA[2][i] << ", " << runtTimesIGA[3][i] << ", " << runtTimesIGA[4][i] << endl;
+  }
 
 }
 
