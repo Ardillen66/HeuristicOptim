@@ -405,7 +405,7 @@ std::vector< std::vector<double> > performSLSExperiment(string nbh, string pivot
       vnd_time_100 += vnd_results[1][i];
     }
   }
-  double run_time_50 = vnd_time_50 / nbInstancesSize * 10; //get average and multiply by 500
+  double run_time_50 = vnd_time_50 / nbInstancesSize * 10; //get average and multiply by 10
   double run_time_100 = vnd_time_100 / nbInstancesSize * 5;
   
   cout << "Runtimes: 50=" << run_time_50 << ", 100=" << run_time_100 << endl;
@@ -592,7 +592,8 @@ std::vector< std::vector<double> > performSLSExperiment(string nbh, string pivot
 }
 
 void run_time_dist(string nbh, string pivot, string trail_pers, string iga_d, string iga_lambda, string deviation){
-  long int bestWCTs[] = {595260, 622342, 592745, 666621, 653748}; //Best WCT for first 5 solutions of size 50
+  cout << "Running experiment on run time distributions" << endl;
+  long int bestWCTs[] = {612023 , 640081 , 613147 , 681596 , 671406 }; //Target WCT for first 5 solutions of size 50
 
   float trail_persistence = std::stof (trail_pers);
   int d = std::stoi (iga_d);
@@ -614,6 +615,7 @@ void run_time_dist(string nbh, string pivot, string trail_pers, string iga_d, st
   // Initialize initial solution with RZ heuristic
   Initialsolution * initSol = new RZInitialsolution;
   //Perform vnd on all instances and take average runtime per instance
+  cout << "Computing runtime" << endl;
   std::vector< std::vector<double> > vnd_results = performVNDExperiment("t_e_i", "rz"); //perform predetermined vnd experiment
   int nbInstances = vnd_results[0].size();
   int nbInstancesSize = nbInstances / 2; //assumes half instances are size 50 and other half 100
@@ -623,9 +625,9 @@ void run_time_dist(string nbh, string pivot, string trail_pers, string iga_d, st
   {
     vnd_time_50 += vnd_results[1][i]; //Total time for instances of size 50
   }
-  double run_time_50 = vnd_time_50 / nbInstancesSize * 5000; //get average and multiply by 5000
+  double run_time_50 = vnd_time_50 / nbInstancesSize * 100; //get average and multiply by 5000
 
-  cout << "Run time distribution (" << deviation << " % from best):" << endl;
+  cout << "Run time distribution (" << deviation << " % from target):" << endl;
   for (int i = 0; i < 5; ++i)
   {
     cout << "Instance " << i+1 << ": " << endl;
@@ -716,9 +718,16 @@ int main(int argc, char *argv[])
     string trail_pers = string(argv[4]).substr(2);
     string iga_d = string(argv[5]).substr(2);
     string iga_lambda = string(argv[6]).substr(2);
-    string deviation = string(argv[7]).substr(2); //Only for run time distribution experiment
     results = performSLSExperiment(nbh, pr, trail_pers, iga_d, iga_lambda);
     //run_time_dist(nbh, pr, trail_pers, iga_d, iga_lambda, deviation);
+  } else if (string(argv[1]) == "runtime"){
+    string pr = string(argv[2]).substr(2);
+    string nbh = string(argv[3]).substr(2);
+    string trail_pers = string(argv[4]).substr(2);
+    string iga_d = string(argv[5]).substr(2);
+    string iga_lambda = string(argv[6]).substr(2);
+    string deviation = string(argv[7]).substr(2); //Only for run time distribution experiment
+    run_time_dist(nbh, pr, trail_pers, iga_d, iga_lambda, deviation);
   }
 
   int nrInstances = results[0].size();

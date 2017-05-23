@@ -50,7 +50,14 @@ flowshopWCT vnd --<neighbourhood_order> --<initialization>
 
 OR
 
-flowshopWCT sls --<initial_ls_pivot_rule> --<neighbourhood> --<aco_trail_persistence> --<iga_d> --<iga_lambda> --<deviation>
+flowshopWCT sls --<initial_ls_pivot_rule> --<neighbourhood> --<aco_trail_persistence> --<iga_d> --<iga_lambda>
+
+OR
+
+flowshopWCT runtime --<initial_ls_pivot_rule> --<neighbourhood> --<aco_trail_persistence> --<iga_d> --<iga_lambda> --<deviation>
+
+For example:
+./flowshopWCT sls --best --insert --0.50 --15 --4.0 
  
 
 
