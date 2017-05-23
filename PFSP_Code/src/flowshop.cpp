@@ -615,29 +615,29 @@ void run_time_dist(string nbh, string pivot, string trail_pers, string iga_d, st
   // Initialize initial solution with RZ heuristic
   Initialsolution * initSol = new RZInitialsolution;
   //Perform vnd on all instances and take average runtime per instance
-  cout << "Computing runtime" << endl;
-  std::vector< std::vector<double> > vnd_results = performVNDExperiment("t_e_i", "rz"); //perform predetermined vnd experiment
-  int nbInstances = vnd_results[0].size();
-  int nbInstancesSize = nbInstances / 2; //assumes half instances are size 50 and other half 100
-  double vnd_time_50 = 0;
-  //Average time for instance size 50 and 100
-  for (int i = 0; i < nbInstancesSize; ++i)
-  {
-    vnd_time_50 += vnd_results[1][i]; //Total time for instances of size 50
-  }
-  double run_time_50 = vnd_time_50 / nbInstancesSize * 100; //get average and multiply by 5000
+  // cout << "Computing runtime" << endl;
+  // std::vector< std::vector<double> > vnd_results = performVNDExperiment("t_e_i", "rz"); //perform predetermined vnd experiment
+  // int nbInstances = vnd_results[0].size();
+  // int nbInstancesSize = nbInstances / 2; //assumes half instances are size 50 and other half 100
+  // double vnd_time_50 = 0;
+  // //Average time for instance size 50 and 100
+  // for (int i = 0; i < nbInstancesSize; ++i)
+  // {
+  //   vnd_time_50 += vnd_results[1][i]; //Total time for instances of size 50
+  // }
+  double run_time_50 = 5;//vnd_time_50 / nbInstancesSize * 100; //get average and multiply by 5000
 
   cout << "Run time distribution (" << deviation << " % from target):" << endl;
   for (int i = 0; i < 5; ++i)
   {
     cout << "Instance " << i+1 << ": " << endl;
-    cout << "ACO, IGA" << endl;
+    
 
     string file = "../instances/50_20_0" + to_string(i+1);
     PfspInstance instance;
     bool readOk = instance.readDataFromFile(&file[0u]);
     Experiments exper(instance);
-
+    cout << "ACO, IGA" << endl;
     long int targetWCT = bestWCTs[i] + dev_from_best * bestWCTs[i];
 
     for (int j = 0; j < 25; ++j)
