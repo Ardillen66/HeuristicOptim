@@ -685,8 +685,6 @@ void run_time_dist(string nbh, string pivot, string trail_pers, string iga_d, st
 
       delete pivotRule;
     }
-    runtTimesACO[i] = runtTimesIGA[i] / 25;
-    runtTimesIGA[i] = runtTimesIGA[i] / 25;//Average
   }
 
   delete neighbourhood;
