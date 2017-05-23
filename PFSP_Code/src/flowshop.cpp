@@ -615,17 +615,17 @@ void run_time_dist(string nbh, string pivot, string trail_pers, string iga_d, st
   // Initialize initial solution with RZ heuristic
   Initialsolution * initSol = new RZInitialsolution;
   //Perform vnd on all instances and take average runtime per instance
-  // cout << "Computing runtime" << endl;
-  // std::vector< std::vector<double> > vnd_results = performVNDExperiment("t_e_i", "rz"); //perform predetermined vnd experiment
-  // int nbInstances = vnd_results[0].size();
-  // int nbInstancesSize = nbInstances / 2; //assumes half instances are size 50 and other half 100
-  // double vnd_time_50 = 0;
-  // //Average time for instance size 50 and 100
-  // for (int i = 0; i < nbInstancesSize; ++i)
-  // {
-  //   vnd_time_50 += vnd_results[1][i]; //Total time for instances of size 50
-  // }
-  double run_time_50 = 5;//vnd_time_50 / nbInstancesSize * 100; //get average and multiply by 5000
+  cout << "Computing runtime" << endl;
+  std::vector< std::vector<double> > vnd_results = performVNDExperiment("t_e_i", "rz"); //perform predetermined vnd experiment
+  int nbInstances = vnd_results[0].size();
+  int nbInstancesSize = nbInstances / 2; //assumes half instances are size 50 and other half 100
+  double vnd_time_50 = 0;
+  //Average time for instance size 50 and 100
+  for (int i = 0; i < nbInstancesSize; ++i)
+  {
+    vnd_time_50 += vnd_results[1][i]; //Total time for instances of size 50
+  }
+  double run_time_50 = vnd_time_50 / nbInstancesSize * 100; //get average and multiply by 5000
 
   std::vector<double> runtTimesACO(5, 0.0);
   std::vector<double> runtTimesIGA(5, 0.0);
@@ -750,31 +750,34 @@ int main(int argc, char *argv[])
   if (string(argv[1]) == "sls")
   {
     cout << "Problem, ACO, IGA" << endl;
-  } else {
+  } else if(string(argv[1]) == "vnd" || string(argv[1]) == "ii"){
     cout << "Problem , Solution , CT" << endl;
   }
+  if(string(argv[1]) != "runtime"){
+    int j = 0;
+    for (int i = 1; i < 10; ++i)
+    {
+      cout << "50_20_0" << i << " , " << results[0][j] << " , " << results[1][j] << endl;
+      j++;
+    }
+    for (int i = 10; i <= 30; ++i)
+    {
+      cout << "50_20_" << i << " , " << results[0][j] << " , " << results[1][j] << endl;
+      j++;
+    }
+    for (int i = 1; i < 10; ++i)
+    {
+      cout << "100_20_0" << i << " , " << results[0][j] << " , " << results[1][j] << endl;
+      j++;
+    }
+    for (int i = 10; i <= 30; ++i)
+    {
+      cout << "100_20_" << i << " , " << results[0][j] << " , " << results[1][j] << endl;
+      j++;
+    }
+  } 
   
-  int j = 0;
-  for (int i = 1; i < 10; ++i)
-  {
-    cout << "50_20_0" << i << " , " << results[0][j] << " , " << results[1][j] << endl;
-    j++;
-  }
-  for (int i = 10; i <= 30; ++i)
-  {
-    cout << "50_20_" << i << " , " << results[0][j] << " , " << results[1][j] << endl;
-    j++;
-  }
-  for (int i = 1; i < 10; ++i)
-  {
-    cout << "100_20_0" << i << " , " << results[0][j] << " , " << results[1][j] << endl;
-    j++;
-  }
-  for (int i = 10; i <= 30; ++i)
-  {
-    cout << "100_20_" << i << " , " << results[0][j] << " , " << results[1][j] << endl;
-    j++;
-  }
+  
 
   //testAll();
   return 0;
