@@ -667,6 +667,15 @@ void run_time_dist(string nbh, string pivot, string trail_pers, string iga_d, st
 
       runtTimesACO[i] += ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
 
+      //New pivot for IGA
+      if(pivot.compare("best") == 0){
+        pivotRule = new BestImprove(instance, initialSolution);
+      } else if(pivot.compare("first") == 0) {
+        pivotRule = new FirstImprove (instance, initialSolution);
+      } else {
+        cout << "Invalid pivot rule!" << endl;
+      }
+
       start = std::clock(); //Restart timer
 
       cout << "Run IGA" << endl;
